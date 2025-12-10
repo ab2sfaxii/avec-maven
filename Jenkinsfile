@@ -1,16 +1,4 @@
-pipeli    tools {
-        maven 'maven3'
-        jdk 'jdk17'
-    }
-
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub_creds')
-        IMAGE_NAME = "abderahmene/avec-maven:1.0.0"
-    }
-
-    stages {
-        stage('GIT') {
-           pipeline {
+pipeline {
     agent any
 
     tools {
@@ -24,6 +12,7 @@ pipeli    tools {
     }
 
     stages {
+
         stage('GIT') {
             steps {
                 git branch: 'main',
@@ -39,28 +28,26 @@ pipeli    tools {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t ${IMAGE_NAME}:latest .
-                '''
+                sh "docker build -t ${IMAGE_NAME}:latest ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh '''
+                sh """
                 echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
                 docker push ${IMAGE_NAME}:latest
-                '''
+                """
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
+                sh """
                 kubectl apply -f k8s/mysql-deployment.yaml -n devops
                 kubectl apply -f k8s/spring-deployment.yaml -n devops
                 kubectl get pods -n devops
-                '''
+                """
             }
         }
     }
