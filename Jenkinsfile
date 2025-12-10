@@ -2,24 +2,25 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JAVA_HOME'
-        maven 'M2_HOME'
+        maven 'maven3'
+        jdk 'jdk17'
     }
 
     stages {
-
         stage('GIT') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/hwafa/timesheetproject.git'
+                git branch: 'main',
+                    url: 'https://github.com/ab2sfaxii/avec-maven'
             }
         }
 
-        stage('Compile Stage') {
+        stage('MAVEN') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn -version'
             }
         }
     }
 }
+
+
 
