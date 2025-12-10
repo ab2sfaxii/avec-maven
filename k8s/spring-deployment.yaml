@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: foyer-service
+  namespace: devops
+spec:
+  selector:
+    app: appspringfoyer
+  ports:
+    - port: 8081
+      targetPort: 8081
+      protocol: TCP
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appspringfoyer
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appspringfoyer
+  template:
+    metadata:
+      labels:
+        app: appspringfoyer
+    spec:
+      containers:
+        - name: appspringfoyer
+          image: abderahmene/appspringfoyer:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-service:3306/foyerdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: foyer
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: foyer
