@@ -41,16 +41,16 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh """
-                kubectl apply -f k8s/mysql-deployment.yaml -n devops
-                kubectl apply -f k8s/spring-deployment.yaml -n devops
-                kubectl get pods -n devops
-                """
-            }
+//        stage('Deploy to Kubernetes') {
+//            steps {
+//                sh """
+//                kubectl apply -f k8s/mysql-deployment.yaml -n devops
+//                kubectl apply -f k8s/spring-deployment.yaml -n devops
+//                kubectl get pods -n devops
+//                """
+//            }
         }
-    }
+//    }
 
     post {
         success {
