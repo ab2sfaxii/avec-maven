@@ -13,16 +13,26 @@ pipeline {
 
     stages {
 
-        stage('GIT') {
+        stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/ab2sfaxii/avec-maven'
+                    url: 'https://github.com/ab2sfaxii/avec-maven.git'
             }
         }
 
         stage('Build Maven') {
             steps {
                 sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube-k8s') {
+                    sh '''
+                        mvn sonar:sonar
+                    '''
+                }
             }
         }
 
@@ -46,7 +56,7 @@ pipeline {
                 sh """
                 kubectl apply -f k8s/mysql-deployment.yaml -n devops
                 kubectl apply -f k8s/spring-deployment.yaml -n devops
-                kubectl get pods -n devops   
+                kubectl get pods -n devops
                 """
             }
         }
@@ -54,11 +64,10 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD pipeline terminé avec succès : Build + Docker + Push + Déploiement Kubernetes ✅'
+            echo 'CI/CD pipeline terminé avec succès : Build + SonarQube + Docker + Push + Déploiement Kubernetes ✅'
         }
         failure {
-            echo '❌ Erreur dans le pipeline (build, push ou déploiement)'
+            echo '❌ Erreur dans le pipeline (build, sonar, docker ou déploiement)'
         }
     }
 }
-
