@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_creds')
-        IMAGE_NAME = "abderahmene/appspringfoyer"
+        IMAGE_NAME = "farah/appspringfoyer"
     }
 
     stages {
@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/ab2sfaxii/avec-maven.git'
+                    url: 'https://github.com/FARAHHAMMAMI/avec-maven.git'
             }
         }
 
